@@ -42,7 +42,12 @@ def get_imap_folder(mail):
 mailAddr = []
 
 # Connexion
-imapCnx = imap_cnx(email_user, email_pass)
+try:
+    imapCnx = imap_cnx(email_user, email_pass)
+
+except:
+    print("Error during authentication")
+    sys.exit(0)
 
 # Get folder
 folderList = get_imap_folder(imapCnx)
@@ -62,29 +67,30 @@ try:
 
                 try:
                     latest_id = int(id_list[-1])
+
+                    # GET ALL INFORMATION ON EACH MESSAGE
+                    for index in range(latest_id, 0, -1):
+                        typ, msg_data = mailCnx.fetch("%s" % index, '(RFC822)')
+                        
+                        for response_part in msg_data:
+                            if isinstance(response_part, tuple):
+                                try:
+                                    msg = email.message_from_string(response_part[1].decode())
+
+                                    for header in ['from']:
+                                        try:
+                                            fromMail   = re.findall('\S+@\S+', msg[header])
+                                            returnMail = (fromMail[0].replace('<', '').replace('>', ''))
+                                            mailAddr.append(returnMail)
+
+                                        except IndexError:
+                                            pass
+
+                                except UnicodeDecodeError as error:
+                                    pass
+
                 except IndexError:
                     pass
-
-                # GET ALL INFORMATION ON EACH MESSAGE
-                for index in range(latest_id, 0, -1):
-                    typ, msg_data = mailCnx.fetch("%s" % index, '(RFC822)')
-                    
-                    for response_part in msg_data:
-                        if isinstance(response_part, tuple):
-                            try:
-                                msg = email.message_from_string(response_part[1].decode())
-
-                                for header in ['from']:
-                                    try:
-                                        fromMail   = re.findall('\S+@\S+', msg[header])
-                                        returnMail = (fromMail[0].replace('<', '').replace('>', ''))
-                                        mailAddr.append(returnMail)
-
-                                    except IndexError:
-                                        pass
-
-                            except UnicodeDecodeError as error:
-                                pass
 
                 mailCnx.close()
                 mailCnx.logout()
