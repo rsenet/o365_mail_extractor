@@ -25,7 +25,7 @@ def imap_cnx(username, password):
 
 
 def get_imap_folder(mail):
-    """ Get all folder reachable
+    """ Get all reachable folder 
             input: mail object (imap_cnx)
             output: list of folder
     """
@@ -36,6 +36,18 @@ def get_imap_folder(mail):
         mailFolder.append(list_mailbox[1])
 
     return mailFolder
+
+
+def print_mail_list(mailing_list):
+    """ Get all reachable folder 
+            input: mailing list (array)
+            output: list of mail
+    """
+    # Delete doublons
+    mailList = list(dict.fromkeys(mailing_list))
+
+    for element in mailList:
+        print(element)
 
 
 # Variables
@@ -98,14 +110,16 @@ try:
             except IMAP4.abort:
                 imapCnx = imap_cnx(email_user, email_pass)
 
+            except ConnectionResetError:
+                print("Connexion reseted")
+                print_mail_list(mailAddr)
+                sys.exit(0)
+
+
             console.log(f"Extraction done for {element}")
 
-        # Delete doublons
-        mailList = list(dict.fromkeys(mailAddr))
-
         # Display the final list
-        for mail in mailList:
-            print(mail)
+        print_mail_list(mailAddr)
 
 except KeyboardInterrupt:
     sys.exit(0)
