@@ -18,7 +18,7 @@ It is now possible to use **o365\_mail\_extractor.py**
 
 ## Tips
 
-If you have MFA activated, it is necessary to create a [application password](https://support.microsoft.com/en-us/account-billing/using-app-passwords-with-apps-that-don-t-support-two-step-verification-5896ed9b-4263-e681-128a-a6f2979a7944)
+If you have MFA activated, it is necessary to create a [application password](https://mysignins.microsoft.com/security-info
 
 
 
